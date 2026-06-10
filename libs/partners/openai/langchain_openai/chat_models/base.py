@@ -1885,6 +1885,16 @@ class BaseChatOpenAI(BaseChatModel):
                 )
             yield generation_chunk
 
+    @property
+    def _stream_event_provider(self) -> str:
+        """`model_provider` id emitted by the native streaming-event hooks.
+
+        Overridden by OpenAI-compatible subclasses (e.g. `ChatDeepSeek`,
+        `ChatXAI`) so their native `stream_events(version="v3")` output is
+        labeled with the correct provider instead of `"openai"`.
+        """
+        return "openai"
+
     def _stream_chat_model_events(
         self,
         messages: list[BaseMessage],
@@ -1939,6 +1949,7 @@ class BaseChatOpenAI(BaseChatModel):
                         schema=None,
                         output_version=self.output_version,
                         message_id=message_id,
+                        provider=self._stream_event_provider,
                     ):
                         if (
                             run_manager is not None
@@ -1969,6 +1980,7 @@ class BaseChatOpenAI(BaseChatModel):
                     response,
                     self._convert_chunk_to_generation_chunk,
                     message_id=message_id,
+                    provider=self._stream_event_provider,
                 ):
                     if (
                         run_manager is not None
@@ -2040,6 +2052,7 @@ class BaseChatOpenAI(BaseChatModel):
                         schema=None,
                         output_version=self.output_version,
                         message_id=message_id,
+                        provider=self._stream_event_provider,
                     ):
                         if (
                             run_manager is not None
@@ -2077,6 +2090,7 @@ class BaseChatOpenAI(BaseChatModel):
                     timed_stream,
                     self._convert_chunk_to_generation_chunk,
                     message_id=message_id,
+                    provider=self._stream_event_provider,
                 ):
                     if (
                         run_manager is not None
